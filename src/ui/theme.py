@@ -48,7 +48,8 @@ def inject_base_css() -> None:
         f"""
         <style>
         html, body, [class*="css"] {{ font-family: {FONT_STACK}; }}
-        .stApp {{ background: {BG}; }}
+        .stApp {{ background: {BG}; color: {TEXT_PRIMARY}; }}
+        .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6, .stApp p, .stApp span, .stApp div {{ color: inherit; }}
         section[data-testid="stSidebar"] {{ background: {SURFACE}; border-right: 1px solid {BORDER}; }}
         #MainMenu, footer, header[data-testid="stHeader"] {{ visibility: hidden; height: 0; }}
         .block-container {{ padding-top: 0.5rem; max-width: 1400px; }}

@@ -25,7 +25,7 @@ def render(conn: sqlite3.Connection, funnel: dict) -> None:
     for col, (label, value) in zip(cols, tiles):
         col.markdown(
             f'<div class="lex-card" style="text-align:center;">'
-            f'<h4>{label}</h4><div style="font-size:1.4rem;font-weight:700;">{value}</div></div>',
+            f'<h4>{label}</h4><div style="font-size:1.4rem;font-weight:700;color:#181818;">{value}</div></div>',
             unsafe_allow_html=True,
         )
 
