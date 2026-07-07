@@ -1,10 +1,16 @@
 # CRM System Design — Lead Lifecycle, Routing, Automation, Governance
 
-Design spec for the CRM system that would produce `data/crm_leads.csv` in
+Design spec for the CRM system that produces `data/revenue_engine.db` in
 production. This is the artifact that answers "have you designed a CRM
 system," independent of which vendor (HubSpot/Salesforce/Attio/Pipedrive)
 implements it — the schema, routing logic, and automation rules are the
 transferable competency; the vendor is an implementation detail.
+
+**v2 update:** this design is no longer just a spec — §2 (routing) and §4
+(stage-gate hygiene) are now executable code in `src/crm/routing.py` and
+`src/crm/lifecycle.py` respectively, exercised by the seed generator and
+asserted in `tests/test_analytics.py`. Section references below point to
+the code that now implements each rule.
 
 ## 1. Lead lifecycle: stage definitions
 
@@ -61,7 +67,7 @@ Three reps (`A. Chouhan`, `R. Iyer`, `S. Kapoor`) receive leads under a
 | MQL unactioned past SLA (6 business hours) | Reassign per §2.4 + notify manager | Prevents silent lead death |
 | SQL discovery call completed | Auto-create Opportunity record, prompt rep for deal-value estimate (required field, no blank Opportunities) | Keeps `output/funnel_metrics.json` pipeline-value math clean — an Opportunity with no value can't be forecast |
 | Opportunity idle > 10 business days with no logged activity | Auto-flag "stalling" on the pipeline-health dashboard (see `dashboard.html`) | Surfaces silently-dying deals before they age into a forced Closed Lost |
-| Closed Lost | Require `lost_reason` from the enumerated list before the record can close (form validation, not optional) | Loss-reason data is the single highest-leverage input for the forecasting model's win-rate assumptions (§ forecast model, `scripts/03_forecast_model.py`) — garbage in here breaks every downstream number |
+| Closed Lost | Require `lost_reason` from the enumerated list before the record can close (form validation, not optional) — enforced in code by `src/crm/lifecycle.py`'s `LeadLifecycle.advance()` | Loss-reason data is the single highest-leverage input for the forecasting model's win-rate assumptions (`src/analytics/forecasting.py`) — garbage in here breaks every downstream number |
 | Closed Won | Auto-handoff task to CS + tag `deal_value_monthly_usd` as locked (immutable after handoff) | Data integrity: won-deal value is the input to `won_mrr_usd`; it must not silently change after the forecast model has already used it |
 
 ## 4. Data hygiene & governance
@@ -75,17 +81,17 @@ Three reps (`A. Chouhan`, `R. Iyer`, `S. Kapoor`) receive leads under a
   leads at all, or nothing is mandatory and the pipeline data rots.
 - **Deduplication**: company-name fuzzy match (Levenshtein ≤ 2) at Lead
   creation, since the same seller can surface through multiple channels
-  (e.g., signal-scored inbound *and* a separate outbound touch) — this
-  dataset's `biz_name()` generator deliberately does not dedupe across the
-  Roman-numeral-suffixed name pool (`Hearthstone Home Co`, `Hearthstone Home
-  Co II`, …) specifically so the dedup rule has something realistic to
-  catch; a production version of this workflow would merge those into one
-  Lead record with multi-channel attribution rather than double-counting it
-  in the funnel.
+  (e.g., signal-scored inbound *and* a separate outbound touch). v2 models
+  this gap directly at the Account level: `scripts/01_generate_seed_data.py`
+  gives ~9% of accounts a second, undeduplicated Lead record (a second
+  channel finding the same seller) rather than only encoding it indirectly
+  through Roman-numeral-suffixed company names; a production version of
+  this workflow would merge those into one Lead record with multi-channel
+  attribution rather than double-counting it in the funnel.
 - **Stale-lead decay, not silent accumulation**: a Lead that never
   qualifies to MQL within 45 days auto-archives (soft delete, recoverable)
   rather than sitting in the "Lead" bucket forever inflating the
-  denominator of every conversion-rate calculation. `funnel_metrics.py`'s
+  denominator of every conversion-rate calculation. `src/analytics/funnel.py`'s
   `n_total` in a production system would need this decay applied before the
   Lead→MQL conversion rate means anything at quarter-end — a known
   limitation of the current snapshot (see README "What's not yet built").
@@ -95,9 +101,10 @@ Three reps (`A. Chouhan`, `R. Iyer`, `S. Kapoor`) receive leads under a
   noise — building the rule and gating its activation on statistical
   minimums is itself a governance decision, not an oversight.
 - **Audit trail**: every stage transition is timestamped (this is exactly
-  what `mql_date`, `sql_date`, `opp_date`, `closed_date` in `crm_leads.csv`
-  represent) — without per-transition timestamps, stage-dwell time,
-  sales-cycle length, and LVR are all uncomputable. This is the single
-  design choice that makes every metric in `02_funnel_metrics.py` possible;
+  what `mql_date`, `sql_date` on `leads` and `opp_created_date`,
+  `closed_date` on `opportunities` represent in `db/schema.sql`) — without
+  per-transition timestamps, stage-dwell time, sales-cycle length, and LVR
+  are all uncomputable. This is the single design choice that makes every
+  metric in `src/analytics/funnel.py` possible;
   a CRM that only stores "current stage" with no history cannot produce any
   of Section 3/4 of the original portfolio gap analysis this project closes.

@@ -2,154 +2,226 @@
   "as_of": "2026-07-07",
   "totals": {
     "leads": 2080,
-    "mql": 921,
-    "sql": 206,
-    "opportunity": 91,
-    "closed_won": 24,
-    "closed_lost": 47,
-    "open_sql": 115,
-    "open_opportunity": 20
+    "mql": 995,
+    "sql": 241,
+    "opportunity": 104,
+    "closed_won": 21,
+    "closed_lost": 56,
+    "open_sql": 137,
+    "open_opportunity": 27
   },
   "funnel_conversion": [
     {
       "from": "Lead",
       "to": "MQL",
       "from_n": 2080,
-      "to_n": 921,
-      "conversion_pct": 44.3,
-      "drop_off_pct": 55.7
+      "to_n": 995,
+      "conversion_pct": 47.8,
+      "drop_off_pct": 52.2,
+      "benchmark_range_pct": [
+        35.0,
+        55.0
+      ],
+      "benchmark_flag": "within_benchmark"
     },
     {
       "from": "MQL",
       "to": "SQL",
-      "from_n": 921,
-      "to_n": 206,
-      "conversion_pct": 22.4,
-      "drop_off_pct": 77.6
+      "from_n": 995,
+      "to_n": 241,
+      "conversion_pct": 24.2,
+      "drop_off_pct": 75.8,
+      "benchmark_range_pct": [
+        20.0,
+        25.0
+      ],
+      "benchmark_flag": "within_benchmark"
     },
     {
       "from": "SQL",
       "to": "Opportunity",
-      "from_n": 206,
-      "to_n": 91,
-      "conversion_pct": 44.2,
-      "drop_off_pct": 55.8
+      "from_n": 241,
+      "to_n": 104,
+      "conversion_pct": 43.2,
+      "drop_off_pct": 56.8,
+      "benchmark_range_pct": [
+        30.0,
+        50.0
+      ],
+      "benchmark_flag": "within_benchmark"
     },
     {
       "from": "Opportunity",
       "to": "Closed Won",
-      "from_n": 91,
-      "to_n": 24,
-      "conversion_pct": 26.4,
-      "drop_off_pct": 73.6
+      "from_n": 104,
+      "to_n": 21,
+      "conversion_pct": 20.2,
+      "drop_off_pct": 79.8,
+      "benchmark_range_pct": [
+        25.0,
+        35.0
+      ],
+      "benchmark_flag": "below_benchmark"
     }
   ],
-  "overall_lead_to_won_pct": 1.15,
+  "overall_lead_to_won_pct": 1.01,
   "sales_cycle_days": {
-    "average": 29.9,
+    "average": 31.5,
     "median": 31,
-    "n_won_deals": 24
+    "n_won_deals": 21
   },
   "stage_dwell_time_days": {
-    "Lead_to_MQL_days": 3.5,
-    "MQL_to_SQL_days": 5.7,
-    "SQL_to_Opportunity_days": 7.4,
-    "Opportunity_to_Closed_days": 14.0
+    "Lead_to_MQL_days": 3.6,
+    "MQL_to_SQL_days": 6.0,
+    "SQL_to_Opportunity_days": 7.3,
+    "Opportunity_to_Closed_days": 14.2
   },
   "lead_velocity_rate": [
     {
       "month": "2026-02",
       "leads": 340,
-      "mqls": 132,
+      "mqls": 141,
       "lvr_pct": null
     },
     {
       "month": "2026-03",
       "leads": 365,
-      "mqls": 158,
-      "lvr_pct": 19.7
+      "mqls": 183,
+      "lvr_pct": 29.8
     },
     {
       "month": "2026-04",
       "leads": 390,
-      "mqls": 170,
-      "lvr_pct": 7.6
+      "mqls": 181,
+      "lvr_pct": -1.1
     },
     {
       "month": "2026-05",
       "leads": 415,
-      "mqls": 177,
-      "lvr_pct": 4.1
+      "mqls": 189,
+      "lvr_pct": 4.4
     },
     {
       "month": "2026-06",
       "leads": 440,
-      "mqls": 207,
-      "lvr_pct": 16.9
+      "mqls": 210,
+      "lvr_pct": 11.1
     },
     {
       "month": "2026-07",
       "leads": 130,
-      "mqls": 77,
-      "lvr_pct": -62.8
+      "mqls": 91,
+      "lvr_pct": -56.7
     }
   ],
   "pipeline": {
-    "open_pipeline_monthly_value_usd": 24000.0,
-    "won_mrr_usd": 32400.0,
+    "open_pipeline_monthly_value_usd": 45050.0,
+    "won_mrr_usd": 36050.0,
     "quarterly_quota_mrr_usd_assumption": 6000,
-    "pipeline_coverage_ratio": 4.0
+    "pipeline_coverage_ratio": 7.51
   },
   "channel_attribution": {
-    "Cold email sequence": {
-      "leads": 382,
-      "won": 3,
-      "won_mrr": 3300.0,
-      "win_rate_pct": 0.79
-    },
     "Signal-scored inbound": {
-      "leads": 704,
-      "won": 9,
-      "won_mrr": 11300.0,
-      "win_rate_pct": 1.28
+      "leads": 709,
+      "won": 6,
+      "won_mrr": 6550.0,
+      "win_rate_pct": 0.85
     },
-    "Outbound LinkedIn": {
-      "leads": 623,
-      "won": 7,
-      "won_mrr": 9800.0,
-      "win_rate_pct": 1.12
+    "Cold email sequence": {
+      "leads": 426,
+      "won": 5,
+      "won_mrr": 10600.0,
+      "win_rate_pct": 1.17
     },
     "Referral": {
-      "leads": 209,
-      "won": 4,
-      "won_mrr": 6800.0,
-      "win_rate_pct": 1.91
+      "leads": 210,
+      "won": 1,
+      "won_mrr": 2200.0,
+      "win_rate_pct": 0.48
     },
     "Content/organic": {
-      "leads": 162,
+      "leads": 154,
       "won": 1,
-      "won_mrr": 1200.0,
-      "win_rate_pct": 0.62
+      "won_mrr": 2650.0,
+      "win_rate_pct": 0.65
+    },
+    "Outbound LinkedIn": {
+      "leads": 581,
+      "won": 8,
+      "won_mrr": 14050.0,
+      "win_rate_pct": 1.38
     }
   },
   "rep_pipeline": {
     "A. Chouhan": {
-      "leads": 710,
-      "sql": 71,
-      "won": 5,
-      "won_mrr": 7000.0
-    },
-    "R. Iyer": {
-      "leads": 639,
-      "sql": 63,
-      "won": 10,
-      "won_mrr": 14900.0
+      "leads": 683,
+      "sql": 80,
+      "won": 4,
+      "won_mrr": 3650.0
     },
     "S. Kapoor": {
-      "leads": 731,
-      "sql": 72,
-      "won": 9,
-      "won_mrr": 10500.0
+      "leads": 705,
+      "sql": 83,
+      "won": 11,
+      "won_mrr": 20650.0
+    },
+    "R. Iyer": {
+      "leads": 692,
+      "sql": 78,
+      "won": 6,
+      "won_mrr": 11750.0
+    }
+  },
+  "segment_performance": {
+    "Beachhead": {
+      "leads": 1109,
+      "won": 18,
+      "won_mrr": 32550.0,
+      "win_rate_pct": 1.62
+    },
+    "Core ICP": {
+      "leads": 799,
+      "won": 3,
+      "won_mrr": 3500.0,
+      "win_rate_pct": 0.38
+    },
+    "Adjacent": {
+      "leads": 161,
+      "won": 0,
+      "won_mrr": 0.0,
+      "win_rate_pct": 0.0
+    },
+    "Poor Fit": {
+      "leads": 11,
+      "won": 0,
+      "won_mrr": 0.0,
+      "win_rate_pct": 0.0
+    }
+  },
+  "industry_performance": {
+    "Home & Family": {
+      "leads": 778,
+      "won": 8,
+      "won_mrr": 17550.0,
+      "win_rate_pct": 1.03
+    },
+    "Health & Beauty": {
+      "leads": 543,
+      "won": 7,
+      "won_mrr": 11400.0,
+      "win_rate_pct": 1.29
+    },
+    "Consumer Electronics": {
+      "leads": 243,
+      "won": 4,
+      "won_mrr": 5400.0,
+      "win_rate_pct": 1.65
+    },
+    "Lifestyle & Outdoor": {
+      "leads": 516,
+      "won": 2,
+      "won_mrr": 1700.0,
+      "win_rate_pct": 0.39
     }
   }
 }

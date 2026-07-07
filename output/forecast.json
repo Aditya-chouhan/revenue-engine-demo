@@ -1,70 +1,70 @@
 {
   "methodology": {
-    "stage_weighted": "Weighted Value = Sum(stage deal value x close probability); probabilities derived from this dataset's own SQL->Opp->Won conversion history, not industry averages.",
-    "monthly_cohort": "Feb-Jun 2026 lead volume CAGR extrapolated 3 months forward, flowed through measured stage-conversion rates."
+    "stage_weighted": "Weighted Value = stage deal value x close probability; probabilities derived from this dataset's own SQL->Opp->Won conversion history, not industry averages.",
+    "monthly_cohort": "Trailing lead-volume trend (excl. partial current month) extrapolated 3 months forward, flowed through measured stage-conversion rates."
   },
   "assumptions": {
     "avg_mom_lead_growth_pct": 6.22,
     "opp_win_rate_bounds": {
       "worst": 0.15,
-      "expected": 0.264,
+      "expected": 0.202,
       "best": 0.35
     }
   },
   "current_pipeline_stage_weighted_forecast": {
-    "avg_deal_value_monthly_usd": 1200.0,
-    "p_open_sql_eventually_won": 0.1167,
-    "p_open_opportunity_won": 0.264,
+    "avg_deal_value_monthly_usd": 1669.0,
+    "p_open_sql_eventually_won": 0.0873,
+    "p_open_opportunity_won": 0.202,
     "scenarios": {
       "worst": {
         "opp_win_rate": 0.15,
-        "forecast_new_mrr_usd": 12749.0
+        "forecast_new_mrr_usd": 21570.0
       },
       "expected": {
-        "opp_win_rate": 0.264,
-        "forecast_new_mrr_usd": 22439.0
+        "opp_win_rate": 0.202,
+        "forecast_new_mrr_usd": 29048.0
       },
       "best": {
         "opp_win_rate": 0.35,
-        "forecast_new_mrr_usd": 29749.0
+        "forecast_new_mrr_usd": 50330.0
       }
     }
   },
-  "monthly_projection_aug_oct_2026": [
+  "monthly_projection_next_3_months": [
     {
       "month": "2026-08",
       "projected_leads": 467,
-      "projected_mql": 207,
-      "projected_sql": 46,
-      "projected_opportunity": 20,
+      "projected_mql": 223,
+      "projected_sql": 54,
+      "projected_opportunity": 23,
       "projected_new_mrr_usd": {
-        "worst": 3600.0,
-        "expected": 6000.0,
-        "best": 8400.0
+        "worst": 5006.0,
+        "expected": 8343.0,
+        "best": 13348.0
       }
     },
     {
       "month": "2026-09",
       "projected_leads": 496,
-      "projected_mql": 220,
-      "projected_sql": 49,
-      "projected_opportunity": 22,
+      "projected_mql": 237,
+      "projected_sql": 57,
+      "projected_opportunity": 25,
       "projected_new_mrr_usd": {
-        "worst": 3600.0,
-        "expected": 7200.0,
-        "best": 9600.0
+        "worst": 6674.0,
+        "expected": 8343.0,
+        "best": 15017.0
       }
     },
     {
       "month": "2026-10",
       "projected_leads": 527,
-      "projected_mql": 233,
-      "projected_sql": 52,
-      "projected_opportunity": 23,
+      "projected_mql": 252,
+      "projected_sql": 61,
+      "projected_opportunity": 26,
       "projected_new_mrr_usd": {
-        "worst": 3600.0,
-        "expected": 7200.0,
-        "best": 9600.0
+        "worst": 6674.0,
+        "expected": 8343.0,
+        "best": 15017.0
       }
     }
   ]

@@ -1,0 +1,49 @@
+{
+  "model_definitions": {
+    "first": "100% credit to the first recorded touch's channel",
+    "last": "100% credit to the final recorded touch's channel before close",
+    "linear": "Credit split evenly across every touch",
+    "u_shaped": "40% first touch / 40% last touch / 20% split across middle touches (n>=3); 50/50 for n=2; 100% for n=1"
+  },
+  "n_won_deals_total": 21,
+  "n_won_deals_attributed": 21,
+  "total_won_mrr_attributed_usd": 36050.0,
+  "revenue_credit_by_channel_usd": {
+    "Outbound LinkedIn": {
+      "first": 14050.0,
+      "last": 8350.0,
+      "linear": 11498.33,
+      "u_shaped": 10981.67
+    },
+    "Signal-scored inbound": {
+      "first": 6550.0,
+      "last": 9950.0,
+      "linear": 9435.0,
+      "u_shaped": 8643.33
+    },
+    "Cold email sequence": {
+      "first": 10600.0,
+      "last": 5650.0,
+      "linear": 6946.67,
+      "u_shaped": 7751.67
+    },
+    "Referral": {
+      "first": 2200.0,
+      "last": 8000.0,
+      "linear": 4846.67,
+      "u_shaped": 5053.33
+    },
+    "Content/organic": {
+      "first": 2650.0,
+      "last": 4100.0,
+      "linear": 3323.33,
+      "u_shaped": 3620.0
+    }
+  },
+  "top_channel_by_model": {
+    "first": "Outbound LinkedIn",
+    "last": "Signal-scored inbound",
+    "linear": "Outbound LinkedIn",
+    "u_shaped": "Outbound LinkedIn"
+  }
+}
