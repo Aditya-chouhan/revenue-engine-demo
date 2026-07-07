@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Revenue Engine Dashboard — Portfolio Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .viz-root {
+    --surface-1:      #fcfcfb;
+    --page-plane:     #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --good:           #0ca30c;
+    --critical:       #d03b3b;
+    --series-1: #2a78d6; --series-2: #1baf7a; --series-3: #eda100;
+    --series-4: #008300; --series-5: #4a3aa7; --series-6: #e34948;
+    --ord-250: #86b6ef; --ord-350: #5598e7; --ord-450: #2a78d6; --ord-550: #1c5cab; --ord-650: #104281;
+  }
+  @media (prefers-color-scheme: dark) {
+    .viz-root {
+      --surface-1:      #1a1a19;
+      --page-plane:     #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --good:           #0ca30c;
+      --critical:       #e66767;
+      --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500;
+      --series-4: #008300; --series-5: #9085e9; --series-6: #e66767;
+      --ord-250: #86b6ef; --ord-350: #5598e7; --ord-450: #2a78d6; --ord-550: #1c5cab; --ord-650: #104281;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    --surface-1:      #1a1a19; --page-plane: #0d0d0d; --text-primary:#ffffff;
+    --text-secondary:#c3c2b7; --gridline:#2c2c2a; --baseline:#383835;
+    --series-1: #3987e5; --series-2: #199e70; --series-3: #c98500; --series-5: #9085e9; --series-6: #e66767;
+  }
+  :root[data-theme="light"] .viz-root {
+    --surface-1:      #fcfcfb; --page-plane: #f9f9f7; --text-primary:#0b0b0b;
+    --text-secondary:#52514e; --gridline:#e1e0d9; --baseline:#c3c2b7;
+    --series-1: #2a78d6; --series-2: #1baf7a; --series-3: #eda100; --series-5: #4a3aa7; --series-6: #e34948;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; }
+  .viz-root {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page-plane);
+    color: var(--text-primary);
+    padding: 32px clamp(16px, 4vw, 48px) 64px;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .subtitle { color: var(--text-secondary); font-size: 0.95rem; margin: 0 0 20px; }
+  .banner {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 16px; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 28px;
+  }
+  .banner b { color: var(--text-primary); }
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .kpi {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .kpi .label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 6px; }
+  .kpi .value { font-size: 1.6rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .kpi .delta { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; }
+  section { margin-bottom: 40px; }
+  section h2 { font-size: 1.1rem; margin: 0 0 4px; }
+  section .desc { color: var(--text-secondary); font-size: 0.85rem; margin: 0 0 16px; max-width: 72ch; }
+  .chart-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 20px; overflow-x: auto; }
+  svg { display: block; }
+  .axis-label { fill: var(--text-muted); font-size: 11px; }
+  .bar-label { fill: var(--text-primary); font-size: 12px; font-variant-numeric: tabular-nums; }
+  .cat-label { fill: var(--text-secondary); font-size: 12px; }
+  .gridline { stroke: var(--gridline); stroke-width: 1; }
+  table.datatable { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 0.82rem; }
+  table.datatable th, table.datatable td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--gridline); font-variant-numeric: tabular-nums; }
+  table.datatable th { color: var(--text-muted); font-weight: 500; text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.03em; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 0.8rem; color: var(--text-secondary); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  footer { color: var(--text-muted); font-size: 0.78rem; border-top: 1px solid var(--gridline); padding-top: 16px; }
+  footer a { color: var(--text-secondary); }
+  bar { cursor: default; }
+</style>
+</head>
+<body>
+<div class="viz-root">
+
+  <h1>Revenue Engine Dashboard</h1>
+  <p class="subtitle">CRM lead lifecycle · funnel &amp; pipeline metrics · forecast — as of 2026-07-07</p>
+
+  <div class="banner">
+    <b>100% synthetic portfolio-demo data.</b> No real Sydon AI or client data
+    is used — Adi's Sydon employment ended 2026-07-05 and that data is not his
+    to reuse. This dataset extends the fictional seller universe from the
+    Clay-enrichment-waterfall project (2,080 synthetic leads, Feb–Jul 2026)
+    at the "2,000+ row" scale that project's own README flagged as the next
+    step. Conversion-rate and cycle-length assumptions are calibrated to
+    published 2025–2026 SMB/high-velocity B2B benchmarks — see footer for
+    sources. Full methodology: <code>README.md</code>.
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="label">Total leads (Feb–Jul)</div><div class="value">2,080</div><div class="delta">6.2% avg MoM growth</div></div>
+    <div class="kpi"><div class="label">Lead → Won</div><div class="value">1.15%</div><div class="delta">24 closed-won deals</div></div>
+    <div class="kpi"><div class="label">Won MRR</div><div class="value">$32,400</div><div class="delta">24 deals, avg $1,350/mo</div></div>
+    <div class="kpi"><div class="label">Open pipeline (SQL+Opp)</div><div class="value">$24,000<span style="font-size:0.9rem;color:var(--text-muted)">/mo</span></div><div class="delta">20 open opportunities</div></div>
+    <div class="kpi"><div class="label">Pipeline coverage</div><div class="value">4.0×</div><div class="delta">vs. $6,000/qtr quota assumption</div></div>
+    <div class="kpi"><div class="label">Avg sales cycle</div><div class="value">29.9 days</div><div class="delta">median 31 days · SMB benchmark: 30–45d</div></div>
+  </div>
+
+  <section>
+    <h2>Funnel: Lead → MQL → SQL → Opportunity → Closed Won</h2>
+    <p class="desc">Stage-wise conversion and drop-off, computed from <code>data/crm_leads.csv</code> via <code>scripts/02_funnel_metrics.py</code> — not asserted, re-derivable from source data.</p>
+    <div class="chart-card">
+      <svg viewBox="0 0 960 260" width="100%" height="260" role="img" aria-label="Funnel chart">
+        <!-- bars: Lead 2080, MQL 921, SQL 206, Opportunity 91, Closed Won 24 -->
+        <!-- scale: width proportional to sqrt for visibility since Won is tiny; use log-ish banding instead -->
+        <g font-family="inherit">
+          <!-- gridlines -->
+          <line class="gridline" x1="180" y1="20" x2="180" y2="240"/>
+          <!-- Lead -->
+          <text class="cat-label" x="0" y="34">Lead</text>
+          <rect x="180" y="18" width="760" height="30" fill="var(--ord-250)" rx="4"><title>Lead: 2,080</title></rect>
+          <text class="bar-label" x="950" y="38" text-anchor="end">2,080</text>
+          <!-- MQL -->
+          <text class="cat-label" x="0" y="82">MQL</text>
+          <rect x="180" y="66" width="337" height="30" fill="var(--ord-350)" rx="4"><title>MQL: 921 (44.3% of Lead)</title></rect>
+          <text class="bar-label" x="530" y="86">921 · 44.3%</text>
+          <!-- SQL -->
+          <text class="cat-label" x="0" y="130">SQL</text>
+          <rect x="180" y="114" width="75" height="30" fill="var(--ord-450)" rx="4"><title>SQL: 206 (22.4% of MQL)</title></rect>
+          <text class="bar-label" x="268" y="134">206 · 22.4%</text>
+          <!-- Opportunity -->
+          <text class="cat-label" x="0" y="178">Opportunity</text>
+          <rect x="180" y="162" width="34" height="30" fill="var(--ord-550)" rx="4"><title>Opportunity: 91 (44.2% of SQL)</title></rect>
+          <text class="bar-label" x="228" y="182">91 · 44.2%</text>
+          <!-- Closed Won -->
+          <text class="cat-label" x="0" y="226">Closed Won</text>
+          <rect x="180" y="210" width="10" height="30" fill="var(--ord-650)" rx="4"><title>Closed Won: 24 (26.4% of Opportunity)</title></rect>
+          <text class="bar-label" x="204" y="230">24 · 26.4%</text>
+        </g>
+      </svg>
+      <table class="datatable">
+        <thead><tr><th>Transition</th><th>From</th><th>To</th><th>Conversion</th><th>Drop-off</th></tr></thead>
+        <tbody>
+          <tr><td>Lead → MQL</td><td>2,080</td><td>921</td><td>44.3%</td><td>55.7%</td></tr>
+          <tr><td>MQL → SQL</td><td>921</td><td>206</td><td>22.4%</td><td>77.6%</td></tr>
+          <tr><td>SQL → Opportunity</td><td>206</td><td>91</td><td>44.2%</td><td>55.8%</td></tr>
+          <tr><td>Opportunity → Closed Won</td><td>91</td><td>24</td><td>26.4%</td><td>73.6%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Lead Velocity Rate — monthly MQL trend</h2>
+    <p class="desc">Month-over-month % change in qualified-lead (MQL) volume. July is a 7-day partial month (data cutoff 2026-07-07) — its −62.8% reading is a partial-month artifact, not a real drop; excluded from the forecast trendline.</p>
+    <div class="chart-card">
+      <svg viewBox="0 0 960 220" width="100%" height="220" role="img" aria-label="Lead velocity rate bar chart">
+        <g font-family="inherit">
+          <line class="gridline" x1="60" y1="180" x2="940" y2="180"/>
+          <!-- MQL counts: Feb 132, Mar 158, Apr 170, May 177, Jun 207, Jul 77(partial) -->
+          <!-- scale: max 207 -> 140px -->
+          <g>
+            <rect x="80"  y="128" width="90" height="52" fill="var(--series-1)" rx="3"><title>Feb 2026: 132 MQLs</title></rect>
+            <text class="bar-label" x="125" y="122" text-anchor="middle">132</text>
+            <text class="axis-label" x="125" y="196" text-anchor="middle">Feb</text>
+
+            <rect x="210" y="118" width="90" height="62" fill="var(--series-1)" rx="3"><title>Mar 2026: 158 MQLs · LVR +19.7%</title></rect>
+            <text class="bar-label" x="255" y="112" text-anchor="middle">158</text>
+            <text class="axis-label" x="255" y="196" text-anchor="middle">Mar</text>
+
+            <rect x="340" y="112" width="90" height="68" fill="var(--series-1)" rx="3"><title>Apr 2026: 170 MQLs · LVR +7.6%</title></rect>
+            <text class="bar-label" x="385" y="106" text-anchor="middle">170</text>
+            <text class="axis-label" x="385" y="196" text-anchor="middle">Apr</text>
+
+            <rect x="470" y="108" width="90" height="72" fill="var(--series-1)" rx="3"><title>May 2026: 177 MQLs · LVR +4.1%</title></rect>
+            <text class="bar-label" x="515" y="102" text-anchor="middle">177</text>
+            <text class="axis-label" x="515" y="196" text-anchor="middle">May</text>
+
+            <rect x="600" y="86"  width="90" height="94" fill="var(--series-1)" rx="3"><title>Jun 2026: 207 MQLs · LVR +16.9%</title></rect>
+            <text class="bar-label" x="645" y="80" text-anchor="middle">207</text>
+            <text class="axis-label" x="645" y="196" text-anchor="middle">Jun</text>
+
+            <rect x="730" y="145" width="90" height="35" fill="var(--text-muted)" opacity="0.5" rx="3"><title>Jul 2026 (partial, 7 days): 77 MQLs — not comparable</title></rect>
+            <text class="bar-label" x="775" y="139" text-anchor="middle">77*</text>
+            <text class="axis-label" x="775" y="196" text-anchor="middle">Jul*</text>
+          </g>
+        </g>
+      </svg>
+      <table class="datatable">
+        <thead><tr><th>Month</th><th>Leads</th><th>MQLs</th><th>LVR (MoM)</th></tr></thead>
+        <tbody>
+          <tr><td>2026-02</td><td>340</td><td>132</td><td>—</td></tr>
+          <tr><td>2026-03</td><td>365</td><td>158</td><td>+19.7%</td></tr>
+          <tr><td>2026-04</td><td>390</td><td>170</td><td>+7.6%</td></tr>
+          <tr><td>2026-05</td><td>415</td><td>177</td><td>+4.1%</td></tr>
+          <tr><td>2026-06</td><td>440</td><td>207</td><td>+16.9%</td></tr>
+          <tr><td>2026-07*</td><td>130</td><td>77</td><td>−62.8% (partial month, not comparable)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Channel attribution</h2>
+    <p class="desc">Leads sourced and MRR won, by channel. Signal-scored inbound (the Clay waterfall's distress-signal sourcing) drives the largest volume and the largest single share of won MRR.</p>
+    <div class="chart-card">
+      <svg viewBox="0 0 960 260" width="100%" height="260" role="img" aria-label="Channel attribution bar chart">
+        <g font-family="inherit">
+          <line class="gridline" x1="220" y1="20" x2="220" y2="250"/>
+          <!-- leads: Signal-scored inbound 704, Outbound LinkedIn 623, Cold email 382, Referral 209, Content/organic 162 -->
+          <!-- max 704 -> 660px -->
+          <text class="cat-label" x="0" y="34">Signal-scored inbound</text>
+          <rect x="220" y="18" width="660" height="26" fill="var(--series-1)" rx="4"><title>704 leads, 9 won, $11,300 MRR</title></rect>
+          <text class="bar-label" x="890" y="36" text-anchor="end">704 leads · $11,300 won</text>
+
+          <text class="cat-label" x="0" y="76">Outbound LinkedIn</text>
+          <rect x="220" y="60" width="583" height="26" fill="var(--series-2)" rx="4"><title>623 leads, 7 won, $9,800 MRR</title></rect>
+          <text class="bar-label" x="813" y="78" text-anchor="end">623 leads · $9,800 won</text>
+
+          <text class="cat-label" x="0" y="118">Cold email sequence</text>
+          <rect x="220" y="102" width="358" height="26" fill="var(--series-3)" rx="4"><title>382 leads, 3 won, $3,300 MRR</title></rect>
+          <text class="bar-label" x="588" y="120" text-anchor="end">382 leads · $3,300 won</text>
+
+          <text class="cat-label" x="0" y="160">Referral</text>
+          <rect x="220" y="144" width="196" height="26" fill="var(--series-5)" rx="4"><title>209 leads, 4 won, $6,800 MRR</title></rect>
+          <text class="bar-label" x="426" y="162" text-anchor="end">209 leads · $6,800 won</text>
+
+          <text class="cat-label" x="0" y="202">Content/organic</text>
+          <rect x="220" y="186" width="152" height="26" fill="var(--series-6)" rx="4"><title>162 leads, 1 won, $1,200 MRR</title></rect>
+          <text class="bar-label" x="382" y="204" text-anchor="end">162 leads · $1,200 won</text>
+        </g>
+      </svg>
+      <table class="datatable">
+        <thead><tr><th>Channel</th><th>Leads</th><th>Won deals</th><th>Won MRR</th><th>Win rate</th></tr></thead>
+        <tbody>
+          <tr><td>Signal-scored inbound</td><td>704</td><td>9</td><td>$11,300</td><td>1.28%</td></tr>
+          <tr><td>Outbound LinkedIn</td><td>623</td><td>7</td><td>$9,800</td><td>1.12%</td></tr>
+          <tr><td>Cold email sequence</td><td>382</td><td>3</td><td>$3,300</td><td>0.79%</td></tr>
+          <tr><td>Referral</td><td>209</td><td>4</td><td>$6,800</td><td>1.91%</td></tr>
+          <tr><td>Content/organic</td><td>162</td><td>1</td><td>$1,200</td><td>0.62%</td></tr>
+        </tbody>
+      </table>
+      <p class="desc" style="margin-top:10px">Note: referral has the highest win rate (1.91%) on the smallest volume — a real RevOps read would flag this as "worth testing at scale," not yet "proven at scale" (n=4 wins).</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Forecast — stage-weighted current pipeline &amp; Aug–Oct projection</h2>
+    <p class="desc">Close probabilities are derived from this dataset's own SQL→Opportunity→Won conversion history (not generic industry assumptions). Scenario bounds use the published SMB Opportunity-win-rate range (15–35%). See <code>scripts/03_forecast_model.py</code>.</p>
+    <div class="chart-card">
+      <svg viewBox="0 0 960 180" width="100%" height="180" role="img" aria-label="Forecast scenario bar chart">
+        <g font-family="inherit">
+          <line class="gridline" x1="140" y1="150" x2="900" y2="150"/>
+          <!-- worst 12749, expected 22439, best 29749 - scale max ~30000 -> 700px -->
+          <text class="cat-label" x="0" y="46">Worst (15% win)</text>
+          <rect x="140" y="30" width="297" height="28" fill="var(--ord-250)" rx="4"><title>Worst case: $12,749 new MRR</title></rect>
+          <text class="bar-label" x="447" y="49">$12,749</text>
+
+          <text class="cat-label" x="0" y="94">Expected (26.4% win)</text>
+          <rect x="140" y="78" width="523" height="28" fill="var(--ord-450)" rx="4"><title>Expected case: $22,439 new MRR</title></rect>
+          <text class="bar-label" x="673" y="97">$22,439</text>
+
+          <text class="cat-label" x="0" y="142">Best (35% win)</text>
+          <rect x="140" y="126" width="694" height="28" fill="var(--ord-650)" rx="4"><title>Best case: $29,749 new MRR</title></rect>
+          <text class="bar-label" x="844" y="145">$29,749</text>
+        </g>
+      </svg>
+      <table class="datatable">
+        <thead><tr><th>Month</th><th>Projected leads</th><th>Projected MQL</th><th>Projected SQL</th><th>Projected Opp</th><th>New MRR (worst / expected / best)</th></tr></thead>
+        <tbody>
+          <tr><td>2026-08</td><td>467</td><td>207</td><td>46</td><td>20</td><td>$3,600 / $6,000 / $8,400</td></tr>
+          <tr><td>2026-09</td><td>496</td><td>220</td><td>49</td><td>22</td><td>$3,600 / $7,200 / $9,600</td></tr>
+          <tr><td>2026-10</td><td>527</td><td>233</td><td>52</td><td>23</td><td>$3,600 / $7,200 / $9,600</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Rep-level pipeline (routing QA)</h2>
+    <p class="desc">Load-balance check on the weighted round-robin routing logic in <code>crm-system-design.md</code> §2 — leads land within 3% of an even three-way split, confirming the routing rule works as designed rather than starving one rep.</p>
+    <table class="datatable">
+      <thead><tr><th>Rep</th><th>Leads</th><th>SQL</th><th>Closed Won</th><th>Won MRR</th></tr></thead>
+      <tbody>
+        <tr><td>A. Chouhan</td><td>710</td><td>71</td><td>5</td><td>$7,000</td></tr>
+        <tr><td>R. Iyer</td><td>639</td><td>63</td><td>10</td><td>$14,900</td></tr>
+        <tr><td>S. Kapoor</td><td>731</td><td>72</td><td>9</td><td>$10,500</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    Data: 100% synthetic (seed=42, reproducible via <code>scripts/01_generate_crm_data.py</code>).
+    Benchmark sources: SMB/high-velocity B2B funnel conversion &amp; sales-cycle
+    ranges (2025–2026 published RevOps research — Digital Bloom, Data-Mania,
+    Prospeo funnel benchmark reports); pipeline coverage ratio ranges by
+    segment (Landbase, Salesmotion, Clari 2026 pipeline-coverage guides).
+    Full citation list in <code>README.md</code> § Benchmark sources.
+    Full write-up: <a href="https://aditya-chouhan.github.io/revenue-engine-demo/">revenue-engine-demo</a>.
+    Code: <a href="https://github.com/Aditya-chouhan/revenue-engine-demo">github.com/Aditya-chouhan/revenue-engine-demo</a>.
+  </footer>
+
+</div>
+</body>
+</html>

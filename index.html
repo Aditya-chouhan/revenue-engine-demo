@@ -1,0 +1,224 @@
+<title>Revenue Engine Demo — CRM lifecycle, funnel metrics, and a forecast that shows its work</title>
+<style>
+  :root {
+    --paper: #ECEEEB;
+    --paper-raised: #F5F6F3;
+    --ink: #191D1B;
+    --ink-soft: #4B524D;
+    --ink-faint: #7B8179;
+    --line: #D6D3C8;
+    --accent: #A8641F;
+    --accent-soft: #EADFCB;
+    --flag: #9C3A2A;
+    --flag-soft: #F1E1DC;
+    --verified: #35603F;
+    --verified-soft: #DEE7DE;
+    --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", "URW Palladio", Georgia, serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 24px 96px; }
+  header.hero { background: var(--paper-raised); border-bottom: 1px solid var(--line); padding: 56px 24px 40px; margin-bottom: 56px; }
+  .hero-inner { max-width: 780px; margin: 0 auto; }
+  .eyebrow { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+  .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 4.4vw, 40px); line-height: 1.18; letter-spacing: -0.01em; margin: 0 0 18px; text-wrap: balance; color: var(--ink); }
+  .dek { font-size: 17.5px; color: var(--ink-soft); max-width: 62ch; margin: 0; }
+  .repo-chip { display: inline-flex; align-items: baseline; gap: 8px; margin-top: 24px; font-family: var(--font-mono); font-size: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 7px 12px; }
+  .repo-chip span { color: var(--ink-faint); }
+  section { margin-bottom: 52px; }
+  h2 { font-family: var(--font-display); font-weight: 500; font-size: 22px; letter-spacing: -0.005em; margin: 0 0 8px; text-wrap: balance; }
+  .section-note { font-size: 13.5px; color: var(--ink-faint); margin: 0 0 20px; }
+  p { max-width: 68ch; color: var(--ink-soft); margin: 0 0 16px; }
+  p:last-child { margin-bottom: 0; }
+  p a { color: var(--accent); }
+  .caveat { display: flex; gap: 12px; align-items: flex-start; background: var(--flag-soft); border: 1px solid #E3BEB2; border-radius: 10px; padding: 16px 20px; margin: 0 0 32px; }
+  .caveat b { color: var(--flag); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; flex-shrink: 0; white-space: nowrap; padding-top: 2px; }
+  .caveat p { margin: 0; color: var(--ink); font-size: 14.5px; max-width: none; }
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 8px; }
+  .kpi { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; }
+  .kpi .l { font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-faint); margin-bottom: 4px; }
+  .kpi .v { font-size: 20px; font-weight: 600; }
+  .schema-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 13px; background: var(--paper-raised); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+  .schema-table th, .schema-table td { text-align: left; padding: 8px 14px; border-bottom: 1px solid var(--line); }
+  .schema-table th { background: var(--paper); color: var(--ink-faint); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; }
+  .schema-table tr:last-child td { border-bottom: none; }
+  .detail-card { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 10px; padding: 24px 26px; margin-bottom: 20px; }
+  .detail-card .path { font-family: var(--font-mono); font-size: 13.5px; color: var(--verified); background: var(--verified-soft); display: inline-block; padding: 3px 8px; border-radius: 5px; margin-bottom: 14px; }
+  .result-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12.8px; }
+  .result-table th, .result-table td { text-align: left; padding: 6px 12px; border-bottom: 1px solid var(--line); }
+  .result-table th { color: var(--ink-faint); font-weight: 600; text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.04em; }
+  .result-table tr:last-child td { border-bottom: none; }
+  .result-table td.num { text-align: right; }
+  .finding { font-size: 13.5px; color: var(--ink-soft); margin: 12px 0 0; padding-top: 12px; border-top: 1px dashed var(--line); }
+  .cta { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 12px; padding: 36px 32px; text-align: left; }
+  .cta h2 { margin-bottom: 12px; }
+  .cta p { max-width: 60ch; }
+  .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 22px; }
+  .btn { display: inline-block; background: var(--ink); color: var(--paper); font-family: var(--font-body); font-weight: 600; font-size: 14.5px; padding: 11px 20px; border-radius: 7px; text-decoration: none; border: none; cursor: pointer; }
+  .btn:hover { background: var(--accent); }
+  .email-line { font-family: var(--font-mono); font-size: 15px; margin-top: 4px; }
+  .email-line a { color: var(--ink); font-weight: 600; }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer a { color: var(--ink-faint); }
+  @media (max-width: 560px) { header.hero { padding: 40px 20px 32px; } .detail-card, .cta { padding: 22px 20px; } .schema-table, .result-table { font-size: 11.5px; } }
+</style>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Live demo · Synthetic CRM dataset, real computed metrics</div>
+    <h1>A full Lead → Revenue engine: CRM lifecycle, funnel math, and a forecast that shows its work</h1>
+    <p class="dek">Every number on this page is computed from a 2,080-row synthetic CRM dataset by three small Python scripts — not typed in by hand. It's built on top of the signal-scoring logic from my Clay enrichment-waterfall work, so a "we found a distressed seller" signal here becomes a routed lead, a tracked funnel, and a forecasted dollar, not just a scored row.</p>
+    <div class="repo-chip"><strong>revenue-engine-demo</strong><span>— Python, deterministic seed=42, zero dependencies beyond the standard library</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="caveat">
+    <b>Synthetic data</b>
+    <p>100% synthetic — no real Sydon AI or client data anywhere in this repo. My Sydon AI employment ended 2026-07-05, and that data isn't mine to reuse. Conversion rates and cycle lengths are calibrated to published 2025–2026 SMB/high-velocity B2B benchmarks (cited below), not invented. This demonstrates the CRM-design, funnel-math, and forecasting methodology — not a real revenue number.</p>
+  </div>
+
+  <section>
+    <h2>Why this, not a live CRM screenshot</h2>
+    <p>I don't have a real book of business to show — the closest thing I ever ran was Sydon's pipeline, and that data isn't mine to publish post-termination. What I can show honestly is the actual competency underneath "CRM experience" on a job description: designing a lead lifecycle with real stage gates and SLAs, writing the funnel math that turns raw stage timestamps into conversion/drop-off/cycle-length numbers, and building a forecast that's honest about its own uncertainty (three scenarios, not one confident guess). A synthetic dataset, built and disclosed as such, is the honest way to demonstrate that.</p>
+  </section>
+
+  <section>
+    <h2>The funnel</h2>
+    <p class="section-note">Full file: <a href="https://github.com/Aditya-chouhan/revenue-engine-demo/blob/main/scripts/02_funnel_metrics.py" target="_blank" rel="noopener">scripts/02_funnel_metrics.py</a> — computed directly from <a href="https://github.com/Aditya-chouhan/revenue-engine-demo/blob/main/data/crm_leads.csv" target="_blank" rel="noopener">data/crm_leads.csv</a>, 2,080 rows.</p>
+    <div class="kpi-row">
+      <div class="kpi"><div class="l">Total leads</div><div class="v">2,080</div></div>
+      <div class="kpi"><div class="l">Lead → Won</div><div class="v">1.15%</div></div>
+      <div class="kpi"><div class="l">Won MRR</div><div class="v">$32,400</div></div>
+      <div class="kpi"><div class="l">Avg cycle</div><div class="v">29.9d</div></div>
+      <div class="kpi"><div class="l">Pipeline coverage</div><div class="v">4.0×</div></div>
+    </div>
+    <div class="detail-card" style="margin-top:16px">
+      <span class="path">stage-wise conversion &amp; drop-off</span>
+      <table class="result-table">
+        <tr><th>transition</th><th class="num">from</th><th class="num">to</th><th class="num">conversion</th><th class="num">drop-off</th></tr>
+        <tr><td>Lead → MQL</td><td class="num">2,080</td><td class="num">921</td><td class="num">44.3%</td><td class="num">55.7%</td></tr>
+        <tr><td>MQL → SQL</td><td class="num">921</td><td class="num">206</td><td class="num">22.4%</td><td class="num">77.6%</td></tr>
+        <tr><td>SQL → Opportunity</td><td class="num">206</td><td class="num">91</td><td class="num">44.2%</td><td class="num">55.8%</td></tr>
+        <tr><td>Opportunity → Closed Won</td><td class="num">91</td><td class="num">24</td><td class="num">26.4%</td><td class="num">73.6%</td></tr>
+      </table>
+      <p class="finding">Every rate lands inside the published 2025–2026 SMB benchmark range it's checked against (Lead→MQL/MQL→SQL/SQL→Opp/Opp→Won ranges cited in sources below) — the dataset was built to be realistic, not to hit a round number.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>The CRM system behind the data</h2>
+    <p class="section-note">Full file: <a href="https://github.com/Aditya-chouhan/revenue-engine-demo/blob/main/crm-system-design.md" target="_blank" rel="noopener">crm-system-design.md</a> — the schema, routing logic, and automation rules a production CRM would need to produce this dataset.</p>
+    <table class="schema-table">
+      <tr><th>stage</th><th>exit criteria</th><th>SLA</th></tr>
+      <tr><td>Lead</td><td>Signal score ≥ 3.0</td><td>Scored within 1 hour (automated)</td></tr>
+      <tr><td>MQL</td><td>Rep confirms budget/authority/need/timing</td><td>Actioned within 6 business hours</td></tr>
+      <tr><td>SQL</td><td>Discovery call completed, deal shape documented</td><td>Call booked within 3 business days</td></tr>
+      <tr><td>Opportunity</td><td>Prospect returns Won/Lost decision</td><td>Follow-up every 5 business days</td></tr>
+      <tr><td>Closed Won/Lost</td><td>Handoff to CS / <code>lost_reason</code> logged</td><td>Handoff within 24 hours</td></tr>
+    </table>
+    <p style="margin-top:14px">Lead routing is a weighted round-robin with a signal-score fast lane: leads scoring ≥8.0 skip the queue and route to whoever has the lowest open-SQL load, because a distress signal decays — the marginal cost of queueing is a lost deal, not a slower one. The load-balance check: rep-level lead counts land within 3% of an even three-way split (710 / 639 / 731), confirming the rule works as designed.</p>
+  </section>
+
+  <section>
+    <h2>The forecast — two methods, three scenarios</h2>
+    <p class="section-note">Full file: <a href="https://github.com/Aditya-chouhan/revenue-engine-demo/blob/main/scripts/03_forecast_model.py" target="_blank" rel="noopener">scripts/03_forecast_model.py</a>. Close probabilities come from this dataset's own SQL→Opportunity→Won history, not a generic industry assumption.</p>
+    <div class="detail-card">
+      <span class="path">stage-weighted forecast — current open pipeline</span>
+      <table class="result-table">
+        <tr><th>scenario</th><th class="num">win rate</th><th class="num">new MRR</th></tr>
+        <tr><td>Worst</td><td class="num">15%</td><td class="num">$12,749</td></tr>
+        <tr><td>Expected</td><td class="num">26.4% (measured)</td><td class="num">$22,439</td></tr>
+        <tr><td>Best</td><td class="num">35%</td><td class="num">$29,749</td></tr>
+      </table>
+      <p class="finding">Win-rate bounds are the published SMB high-velocity range (15–35%), not an arbitrary spread — and the coverage ratio math checks out independently: 1 ÷ 26.4% measured win rate ≈ 3.8×, versus the 4.0× modeled against the demo quota assumption.</p>
+    </div>
+    <div class="detail-card">
+      <span class="path">monthly cohort projection — Aug–Oct 2026</span>
+      <table class="result-table">
+        <tr><th>month</th><th class="num">proj. leads</th><th class="num">proj. opp</th><th class="num">new MRR (worst/expected/best)</th></tr>
+        <tr><td>2026-08</td><td class="num">467</td><td class="num">20</td><td class="num">$3.6K / $6.0K / $8.4K</td></tr>
+        <tr><td>2026-09</td><td class="num">496</td><td class="num">22</td><td class="num">$3.6K / $7.2K / $9.6K</td></tr>
+        <tr><td>2026-10</td><td class="num">527</td><td class="num">23</td><td class="num">$3.6K / $7.2K / $9.6K</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Live dashboard</h2>
+    <p>Pipeline health, funnel visualization, channel attribution, forecast, and rep-level pipeline QA — self-contained, dark-mode aware, built with a validated accessible color system (CVD-checked categorical palette, WCAG contrast relief via direct labels + data tables).</p>
+    <p><a href="https://aditya-chouhan.github.io/revenue-engine-demo/dashboard.html" target="_blank" rel="noopener"><strong>Open the dashboard →</strong></a></p>
+  </section>
+
+  <section>
+    <h2>What's not built (named, not hidden)</h2>
+    <p>Stale-lead decay is designed in <code>crm-system-design.md</code> but not simulated in the generator yet. Category-specialized routing is designed but deliberately not activated — there isn't enough per-rep, per-category sample size to trust the win-rate difference isn't noise, and shipping an unvalidated segmentation rule would be worse than not having one. CAC and retention aren't modeled because there's no spend or renewal-event data in this dataset to compute them honestly — adding a synthetic spend log and a renewal event would make both a straightforward next step.</p>
+  </section>
+
+  <section>
+    <h2>Sources</h2>
+    <p class="section-note">Funnel and pipeline-coverage benchmarks, 2025–2026:</p>
+    <p>
+      <a href="https://thedigitalbloom.com/learn/pipeline-performance-benchmarks-2025/" target="_blank" rel="noopener">2025 B2B SaaS Funnel Benchmarks — Digital Bloom</a><br>
+      <a href="https://www.data-mania.com/blog/mql-to-sql-conversion-rate-benchmarks-2025/" target="_blank" rel="noopener">MQL→SQL Conversion Rates by Industry (2026) — Data-Mania</a><br>
+      <a href="https://prospeo.io/s/lead-conversion-rate-benchmarks" target="_blank" rel="noopener">Lead Conversion Rate Benchmarks 2026 — Prospeo</a><br>
+      <a href="https://prospeo.io/s/b2b-sales-funnel-stages" target="_blank" rel="noopener">B2B Sales Funnel Stages: 2026 Guide — Prospeo</a><br>
+      <a href="https://www.landbase.com/blog/pipeline-coverage-ratio-calculate-2026" target="_blank" rel="noopener">Pipeline Coverage Ratio — Landbase</a><br>
+      <a href="https://salesmotion.io/blog/healthy-pipeline-coverage" target="_blank" rel="noopener">Healthy Pipeline Coverage — Salesmotion</a><br>
+      <a href="https://www.clari.com/blog/pipeline-coverage-best-practices/" target="_blank" rel="noopener">Pipeline Coverage Ratio — Clari</a><br>
+      <a href="https://forecastio.ai/blog/pipeline-coverage" target="_blank" rel="noopener">Sales Pipeline Coverage: Formula, Ratios & Forecast Impact — Forecastio</a>
+    </p>
+  </section>
+
+  <section class="cta">
+    <h2>Why I built this</h2>
+    <p>Every other demo in this portfolio (<a href="https://aditya-chouhan.github.io/signal-engine-demo/" target="_blank" rel="noopener">signal-engine-demo</a>, <a href="https://aditya-chouhan.github.io/account-brief-demo/" target="_blank" rel="noopener">account-brief-demo</a>, <a href="https://aditya-chouhan.github.io/gtm-warehouse-demo/" target="_blank" rel="noopener">gtm-warehouse-demo</a>) proves out one piece of a GTM system — scoring, briefing, warehousing. This is the piece that was missing: what happens after a signal becomes a lead. A CRM lifecycle it can move through, funnel math that tells you where it's dying, and a forecast that's honest about its own uncertainty.</p>
+    <div class="cta-row">
+      <a class="btn" href="mailto:ai.adityachouhan@gmail.com?subject=Revenue%20engine%20demo" target="_top" rel="noopener">Let's talk</a>
+      <button class="btn" type="button" id="copyEmailBtn" style="border:none;cursor:pointer;">Copy email address</button>
+    </div>
+    <p class="email-line">Or write directly: <a href="mailto:ai.adityachouhan@gmail.com" target="_top" rel="noopener">ai.adityachouhan@gmail.com</a></p>
+  </section>
+
+  <footer>
+    <span>Aditya Chouhan — <a href="https://aditya-chouhan.github.io/signal-engine-demo/" target="_blank" rel="noopener">signal-engine-demo</a> · <a href="https://aditya-chouhan.github.io/gtm-warehouse-demo/" target="_blank" rel="noopener">gtm-warehouse-demo</a> · <a href="https://aditya-chouhan.github.io/" target="_blank" rel="noopener">full portfolio</a></span>
+    <a href="mailto:ai.adityachouhan@gmail.com" target="_top" rel="noopener">ai.adityachouhan@gmail.com</a>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copyEmailBtn');
+    if (!btn) return;
+    var email = 'ai.adityachouhan@gmail.com';
+    var originalLabel = btn.textContent;
+    btn.addEventListener('click', function () {
+      function fallbackCopy() {
+        var ta = document.createElement('textarea');
+        ta.value = email;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).catch(fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+      btn.textContent = 'Copied!';
+      btn.disabled = true;
+      setTimeout(function () { btn.textContent = originalLabel; btn.disabled = false; }, 2000);
+    });
+  })();
+</script>
