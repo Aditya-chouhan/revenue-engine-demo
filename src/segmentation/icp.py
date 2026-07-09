@@ -36,8 +36,8 @@ INDUSTRY_MAP = {
 }
 
 # Firmographic proxy: this ICP targets small/independent Amazon sellers, not
-# larger operations with in-house teams -- mirrors Sydon's actual SMB-seller
-# targeting rationale, not a generic "bigger is better" firmographic prior.
+# larger operations with in-house teams -- mirrors a prior role's actual
+# SMB-seller targeting rationale, not a generic "bigger is better" prior.
 EMPLOYEE_BAND_FIT = {
     "1-10": 35,
     "11-50": 30,

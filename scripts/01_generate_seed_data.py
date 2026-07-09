@@ -7,8 +7,8 @@ opportunities, multi-touch activities, signals) into SQLite via src/db.py.
 Amazon-seller universe as career/projects/clay-enrichment-waterfall and v1
 of this project (Beauty/Baby/Home/Gadgets/Skin/Kitchen/Pet/Outdoor
 categories, *.example.com domains) -- does NOT read or reuse any real
-Sydon AI business data (Sydon employment ended 2026-07-05; that data is not
-Adi's to reuse post-termination, same exclusion as the Clay project).
+prior-employer business data (that employment ended 2026-07-05; that data is
+not Adi's to reuse post-termination, same exclusion as the Clay project).
 
 What changed from v1 (scripts/01_generate_crm_data.py, kept in git history):
   - Accounts/Contacts are now real normalized entities, not lead-only rows.

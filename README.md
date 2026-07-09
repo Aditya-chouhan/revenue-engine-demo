@@ -13,10 +13,10 @@
 **Dashboard:** https://aditya-chouhan.github.io/revenue-engine-demo/dashboard.html
 **Live operational CRM:** https://revenue-engine-demo-crzmn3vxfxzbt6qetnqwb4.streamlit.app
 
-No Sydon code, data, or credentials used anywhere in this repo. Built on a
-synthetic 2,080-lead dataset since I don't have a real book of business to
-publish (Sydon AI employment ended 2026-07-05, and that data isn't mine to
-reuse).
+No prior-employer code, data, or credentials used anywhere in this repo.
+Built on a synthetic 2,080-lead dataset since I don't have a real book of
+business to publish (that employment ended 2026-07-05, and that data isn't
+mine to reuse).
 
 ## What this is
 
