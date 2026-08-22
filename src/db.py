@@ -6,6 +6,8 @@ is either right here as a named helper or spelled out directly in
 src/analytics/*.py -- there is no hidden query-generation layer, which is
 the point (the brief explicitly asks to avoid black-box logic).
 """
+from __future__ import annotations
+
 import sqlite3
 from pathlib import Path
 

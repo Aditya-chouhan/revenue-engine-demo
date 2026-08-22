@@ -9,6 +9,8 @@ asset embedded). This is a portfolio piece designed "in the style of"
 Lightning, not a trademark claim to be the Salesforce product itself --
 see README.md's framing note.
 """
+from __future__ import annotations
+
 import streamlit as st
 
 NAVY = "#16325C"

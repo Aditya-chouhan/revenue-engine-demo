@@ -100,6 +100,7 @@ diverge:
 ```bash
 git clone https://github.com/Aditya-chouhan/revenue-engine-demo.git
 cd revenue-engine-demo
+# Python 3.9+ (verified on 3.9.6 and newer)
 python3 -m venv .venv && source .venv/bin/activate      # isolated env -- do not install into a shared/global venv
 pip install -r requirements.txt
 

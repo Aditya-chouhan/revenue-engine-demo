@@ -22,6 +22,8 @@ within a few percent of an even three-way split -- the design doc's claim
 about routing behavior, now provably true of the code path, not just of one
 dataset.
 """
+from __future__ import annotations
+
 import random
 
 from src.crm.scoring import FAST_LANE_SIGNAL_THRESHOLD

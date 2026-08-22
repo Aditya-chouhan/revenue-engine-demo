@@ -16,6 +16,8 @@ Every output carries "generated_by" naming which path produced it. No path
 ever fabricates a plausible-sounding paragraph disconnected from the data --
 that is the concrete fix for the brief's "avoid fake AI outputs" requirement.
 """
+from __future__ import annotations
+
 import json
 import os
 from pathlib import Path

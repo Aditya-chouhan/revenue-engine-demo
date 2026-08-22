@@ -15,6 +15,8 @@ enforced code rather than narrative:
 Raises ValueError on any violation -- this is the mechanism, not just the
 documentation, of the CRM's data-hygiene rule.
 """
+from __future__ import annotations
+
 from src.models import Lead
 
 STAGE_ORDER = ["Lead", "MQL", "SQL", "Opportunity", "Closed Won", "Closed Lost"]

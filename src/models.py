@@ -3,6 +3,8 @@ Dataclasses mirroring db/schema.sql. These are the in-memory shape used by
 the seed generator and the crm/* logic modules before rows are persisted --
 one definition of "what a Lead is," shared by every module that touches one.
 """
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 
