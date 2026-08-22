@@ -1,4 +1,19 @@
 <title>Revenue Engine Demo — a CRM lifecycle, funnel math, forecast, and an operational Salesforce-style UI on top</title>
+<meta name="description" content="Every number on this page is computed by Python reading a 2,080-lead synthetic dataset in a normalized 6-table SQLite database, not typed in by hand.">
+<link rel="canonical" href="https://aditya-chouhan.github.io/revenue-engine-demo/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#08080A" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Revenue Engine Demo — a CRM lifecycle, funnel math, forecast, and an operational Salesforce-style UI on top">
+<meta property="og:description" content="Every number on this page is computed by Python reading a 2,080-lead synthetic dataset in a normalized 6-table SQLite database, not typed in by hand.">
+<meta property="og:url" content="https://aditya-chouhan.github.io/revenue-engine-demo/">
+<meta property="og:image" content="https://aditya-chouhan.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231D1D1F'/%3E%3Ctext x='32' y='44' font-family='-apple-system,BlinkMacSystemFont,Helvetica,Arial' font-size='36' font-weight='600' fill='%23fff' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+
 <style>
   :root {
     --paper: #ECEEEB;
@@ -75,6 +90,147 @@
   @media (max-width: 560px) { header.hero { padding: 40px 20px 32px; } .detail-card, .cta { padding: 22px 20px; } .schema-table, .result-table { font-size: 11.5px; } }
 </style>
 
+<style>
+/* ============ APPLE-DESIGN RETHEME (adapter — see _system/adapt_family_b.py) ============
+   Redefines this page's own custom properties. No selector below renames or
+   removes anything the original stylesheet already targets. */
+:root {
+  /* --- retint the page's own tokens to the monochrome system --- */
+  --paper: #FFFFFF;
+  --paper-raised: #F5F5F7;
+  --ink: #1D1D1F;
+  --ink-soft: #6E6E73;
+  --ink-faint: #86868B;
+  --line: rgba(0,0,0,0.08);
+  --accent: #0066CC;
+  --accent-soft: #E8F0FB;
+  --flag: #6E6E73;        /* was red — neutralized, no trust-coding */
+  --flag-soft: #F5F5F7;
+  --verified: #1D1D1F;    /* was green — neutralized, no implied validation */
+  --verified-soft: #F5F5F7;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  --code-bg: #1D1D1F;
+  --code-fg: #F5F5F7;
+  --code-dim: #86868B;
+  --hairline-strong: rgba(0,0,0,0.14);
+  --e1: 0 1px 2px rgba(0,0,0,.04), 0 1px 1px rgba(0,0,0,.03);
+  --e2: 0 4px 16px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --e3: 0 12px 40px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.05);
+  --chrome: rgba(255,255,255,0.72);
+  --blur-chrome: 20px;
+  --damped: cubic-bezier(0.32, 0.72, 0, 1);
+  --bounce: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --micro: cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #08080A;
+    --paper-raised: #141416;
+    --ink: #F5F5F7;
+    --ink-soft: #A1A1A6;
+    --ink-faint: #6E6E73;
+    --line: rgba(255,255,255,0.10);
+    --hairline-strong: rgba(255,255,255,0.18);
+    --accent: #2997FF;
+    --accent-soft: #132537;
+    --flag: #A1A1A6;
+    --flag-soft: #141416;
+    --verified: #F5F5F7;
+    --verified-soft: #141416;
+    --code-bg: #000000;
+    --code-fg: #E8E8ED;
+    --code-dim: #6E6E73;
+    --chrome: rgba(20,20,22,0.72);
+    --e1: 0 1px 2px rgba(0,0,0,.5);
+    --e2: 0 8px 28px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05);
+    --e3: 0 20px 56px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,255,255,.07);
+  }
+}
+
+html { scroll-behavior: smooth; }
+body { font-optical-sizing: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; transition: background-color .25s ease, color .25s ease; }
+h1, h2, h3 { font-weight: 600 !important; letter-spacing: -0.02em; }
+h1 { letter-spacing: -0.025em !important; }
+a { transition: color .2s var(--damped); }
+
+/* elevation instead of flat borders */
+header.hero { box-shadow: none; }
+.detail-card, .cta { box-shadow: var(--e1); transition: box-shadow .3s var(--damped), background-color .25s ease, border-color .25s ease; }
+.detail-card:hover { box-shadow: var(--e2); }
+
+/* code blocks onto the shared token names */
+pre, .brief-box { background: var(--code-bg) !important; color: var(--code-fg) !important; }
+pre .c { color: var(--code-dim) !important; }
+.brief-box .label { color: var(--code-dim) !important; }
+
+/* strip the last hardcoded (non-var) colour accents on warning/callout boxes */
+.caveat { border-color: var(--hairline-strong) !important; }
+.live-cta { border-color: var(--hairline-strong) !important; }
+
+/* tables scroll inside themselves on narrow viewports without any markup change */
+.schema-table, .result-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-scroll table { min-width: 560px; }
+
+/* insurance for sub-500px viewports (screenshot tooling floors at 500px, real phones can go narrower) */
+.repo-chip, .caveat p, .live-cta p, .brief-box, .stage-pill, .kpi { overflow-wrap: anywhere; }
+
+/* buttons: spring-eased press, not just hover */
+.btn { transition: background-color .25s var(--damped), transform .12s var(--micro); }
+.btn:active { transform: scale(.978); }
+
+/* table row hover picks up the retinted paper-raised */
+tbody tr:hover, table tr:hover { background: var(--paper-raised); }
+
+/* ---------- sticky glass nav (new chrome, adds a way back to the portfolio) ---------- */
+.pf-nav {
+  position: sticky; top: 0; z-index: 50; height: 52px;
+  display: flex; align-items: center; border-bottom: 1px solid transparent;
+  transition: background-color .35s var(--damped), backdrop-filter .35s var(--damped), border-color .35s var(--damped);
+  margin-bottom: 0;
+}
+.pf-nav[data-stuck="true"] {
+  background: var(--chrome);
+  -webkit-backdrop-filter: blur(var(--blur-chrome)) saturate(180%);
+  backdrop-filter: blur(var(--blur-chrome)) saturate(180%);
+  border-bottom-color: var(--line);
+}
+.pf-nav-inner { width: 100%; max-width: 780px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.pf-back { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-size: 15px; font-weight: 500; color: var(--ink); text-decoration: none; }
+.pf-back .arrow { display: inline-block; transition: transform .25s var(--damped); }
+.pf-back:hover .arrow { transform: translateX(-3px); }
+.pf-nav-right { display: flex; align-items: center; gap: 20px; }
+.pf-nav-right a { font-family: var(--font-body); font-size: 15px; font-weight: 500; color: var(--ink-soft); text-decoration: none; }
+.pf-nav-right a:hover { color: var(--ink); }
+@media (max-width: 560px) { .pf-nav-hide-sm { display: none; } }
+
+/* ---------- scroll reveal — content visible by default, JS only hides what it will observe ---------- */
+[data-pf-reveal="pending"] { opacity: 0; transform: translateY(16px); filter: blur(6px); }
+[data-pf-reveal="in"] { opacity: 1; transform: none; filter: blur(0); transition: opacity .55s var(--damped), transform .55s var(--damped), filter .55s var(--damped); }
+
+@media (prefers-contrast: more) {
+  :root { --line: rgba(0,0,0,.35) !important; --hairline-strong: rgba(0,0,0,.55) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  [data-pf-reveal] { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .btn:active { transform: none; }
+}
+
+</style>
+
+
+<nav class="pf-nav" id="pfNav" aria-label="Primary">
+  <div class="pf-nav-inner">
+    <a class="pf-back" href="https://aditya-chouhan.github.io/"><span class="arrow">&larr;</span> Aditya Chouhan</a>
+    <span class="pf-nav-right">
+      <a class="pf-nav-hide-sm" href="https://github.com/Aditya-chouhan/revenue-engine-demo">Repository</a>
+      <a href="mailto:ai.adityachouhan@gmail.com?subject=Project">Get in touch</a>
+    </span>
+  </div>
+</nav>
 <header class="hero">
   <div class="hero-inner">
     <div class="eyebrow">v2 · Normalized SQLite schema, executable CRM logic, operational UI</div>
@@ -255,4 +411,41 @@
       setTimeout(function () { btn.textContent = originalLabel; btn.disabled = false; }, 2000);
     });
   })();
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var nav = document.getElementById('pfNav');
+  var hero = document.querySelector('header.hero');
+  if (nav && hero) {
+    var setStuck = function () { nav.dataset.stuck = (window.scrollY > hero.offsetHeight - 52) ? 'true' : 'false'; };
+    setStuck();
+    window.addEventListener('scroll', setStuck, { passive: true });
+  }
+
+  if (!reduce && 'IntersectionObserver' in window) {
+    var targets = document.querySelectorAll('section, .detail-card, .cta');
+    Array.prototype.forEach.call(targets, function (el) { el.dataset.pfReveal = 'pending'; });
+    var io = new IntersectionObserver(function (entries) {
+      var i = 0;
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        el.style.transitionDelay = (i * 60) + 'ms';
+        i++;
+        el.dataset.pfReveal = 'in';
+        io.unobserve(el);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
+    Array.prototype.forEach.call(targets, function (el) { io.observe(el); });
+    setTimeout(function () {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-pf-reveal="pending"]'), function (el) {
+        el.style.transitionDelay = '0ms'; el.dataset.pfReveal = 'in';
+      });
+    }, 1200);
+  }
+})();
 </script>
