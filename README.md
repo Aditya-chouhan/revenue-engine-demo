@@ -4,14 +4,14 @@
 
 > **Supersedes v1** (also built 2026-07-07, same day — kept in git history).
 > v1 was a flat-CSV dataset + three standalone scripts + a static dashboard.
-> v2 rebuilds it as a production-grade system: a normalized SQLite CRM,
+> v2 rebuilds it as a runnable portfolio prototype: a normalized SQLite CRM,
 > executable routing/lifecycle logic (not just a design doc), multi-touch
 > attribution, an ICP/segmentation engine, a simulated signal-ingestion
 > layer, and an AI RevOps Copilot.
 
 **Write-up:** https://aditya-chouhan.github.io/revenue-engine-demo/
 **Dashboard:** https://aditya-chouhan.github.io/revenue-engine-demo/dashboard.html
-**Live operational CRM:** https://revenue-engine-demo-crzmn3vxfxzbt6qetnqwb4.streamlit.app
+**Hosted read-only CRM demo:** https://revenue-engine-demo-crzmn3vxfxzbt6qetnqwb4.streamlit.app
 
 100% synthetic — no real prior-employer or client data anywhere in this repo.
 
@@ -120,9 +120,13 @@ streamlit run dashboard_app.py               # analytics-only dashboard
 
 Or open `dashboard.html` directly in a browser for the no-install static view
 (same numbers, refreshed from the same `output/*.json` this README cites),
-or visit the hosted **[live operational CRM](https://revenue-engine-demo-crzmn3vxfxzbt6qetnqwb4.streamlit.app)** — no install required.
+or visit the hosted **[read-only CRM demo](https://revenue-engine-demo-crzmn3vxfxzbt6qetnqwb4.streamlit.app)** — no install required.
 
-## GTM Impact / Revenue Impact
+## Implemented behavior and synthetic outputs
+
+Every funnel, conversion, attribution, MRR and forecast figure in this section
+comes from the seed-42 synthetic dataset. These outputs demonstrate the code
+paths; they are not employer results, customer outcomes or measured lift.
 
 - **Designed and executed a full Lead→MQL→SQL→Opportunity→Closed CRM
   lifecycle** as enforced code, not just a design doc: `src/crm/lifecycle.py`
@@ -138,15 +142,17 @@ or visit the hosted **[live operational CRM](https://revenue-engine-demo-crzmn3v
 - **Shipped a working ICP/segmentation engine**: accounts score 0-100 on
   category + firmographic + signal fit, bucketing into Beachhead / Core ICP
   / Adjacent / Poor Fit — and Beachhead accounts convert at **4.3×** Core
-  ICP's Lead→Won rate (1.62% vs. 0.38%, on 1,109 vs. 799 leads), proving the
-  segmentation changes real funnel behavior rather than just labeling it.
+  ICP's Lead→Won rate (1.62% vs. 0.38%, on 1,109 vs. 799 leads). Because the
+  generator encodes segment-dependent outcomes, this verifies the reporting
+  path; it does not prove predictive accuracy or real conversion lift.
 - **Built multi-touch attribution** across 4 standard models (first/last/
   linear/U-shaped) over ~8,400 timestamped touches — first-touch and
   linear both credit Outbound LinkedIn as the top channel ($14,050 /
   $11,498), but last-touch credits Signal-scored inbound instead ($9,950) —
-  a genuine attribution-strategy decision point, not a data artifact.
+  an illustration of how attribution policy changes conclusions on the same
+  synthetic touches, not evidence that either channel caused revenue.
 - **Built a two-method revenue forecast**: stage-weighted on this dataset's
-  own SQL→Opp→Won conversion history ($21.6K–$50.3K new MRR depending on
+  synthetic SQL→Opp→Won history ($21.6K–$50.3K simulated new MRR depending on
   win-rate scenario) plus a monthly cohort projection extrapolating the
   trailing lead-volume trend three months forward (Aug–Oct 2026).
 - **Shipped an AI RevOps Copilot** that answers "why is pipeline down,"

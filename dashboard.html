@@ -114,7 +114,7 @@
   <div class="kpi-row">
     <div class="kpi"><div class="label">Total leads (Feb–Jul)</div><div class="value">2,080</div><div class="delta">6.2% avg MoM growth</div></div>
     <div class="kpi"><div class="label">Lead → Won</div><div class="value">1.01%</div><div class="delta">21 closed-won deals</div></div>
-    <div class="kpi"><div class="label">Won MRR</div><div class="value">$36,050</div><div class="delta">21 deals, avg $1,717/mo</div></div>
+    <div class="kpi"><div class="label">Synthetic won MRR</div><div class="value">$36,050</div><div class="delta">21 simulated deals, avg $1,717/mo</div></div>
     <div class="kpi"><div class="label">Open pipeline (Opportunity)</div><div class="value">$45,050<span style="font-size:0.9rem;color:var(--text-muted)">/mo</span></div><div class="delta">27 open opportunities</div></div>
     <div class="kpi"><div class="label">Pipeline coverage</div><div class="value">7.51×</div><div class="delta">vs. $6,000/qtr quota assumption</div></div>
     <div class="kpi"><div class="label">Avg sales cycle</div><div class="value">31.5 days</div><div class="delta">median 31 days · SMB benchmark: 30–45d</div></div>
@@ -266,7 +266,7 @@
 
   <section>
     <h2>ICP fit &amp; segmentation (NEW in v2)</h2>
-    <p class="desc"><code>src/segmentation/icp.py</code> scores every account 0–100 on category fit + firmographic fit + signal strength, bucketing into Beachhead / Core ICP / Adjacent / Poor Fit — and segment membership measurably changes conversion behavior in the funnel below, not just as a label.</p>
+    <p class="desc"><code>src/segmentation/icp.py</code> scores every account 0–100 on category fit + firmographic fit + signal strength, bucketing into Beachhead / Core ICP / Adjacent / Poor Fit. The synthetic generator encodes different conversion odds by segment, so this section verifies reporting behavior rather than predictive lift.</p>
     <div class="chart-card">
       <table class="datatable">
         <thead><tr><th>Segment</th><th>Leads</th><th>Won</th><th>Won MRR</th><th>Lead→Won rate</th></tr></thead>
